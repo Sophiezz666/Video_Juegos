@@ -15,7 +15,7 @@ print("\nMostarar por columna Titulo:")
 # Seleccionar columnas específicas
 print(df['title'])
 print("---" * 20)
-print("\Mostarar por columnas unidades vendidas y total ganancias:")
+print("Mostarar por columnas unidades vendidas y total ganancias:")
 print(df[['units_sold', 'total_revenue']])
 print("\nMostrar filas por indice")
 #Seleccionar filas específicas
