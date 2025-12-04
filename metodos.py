@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from principal import VideoJuegos
-
+#
 class VideojuegoAnalizador:
     #Clase para analizar y procesar datos de videojuegos"
     def __init__(self, archivo_csv):
