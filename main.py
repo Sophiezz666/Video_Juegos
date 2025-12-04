@@ -2,15 +2,6 @@ from VideoJuego import VideoJuego
 from metodos import Metodos
 def main():
   
-    
-    # Crear instancia del analizador
-    analizador = Metodos('videojuegos_dataset.csv')
-    # Generar reporte completo
-    analizador.generar_reporte_completo()
-    
-    # Generar dashboard
-    analizador.generar_dashboard()
-    
     print("\n" + "="*60)
     print("ANÁLISIS COMPLETADO")
     print("="*60)
@@ -23,6 +14,13 @@ def main():
     print("6. Dashboard visual interactivo")
     print("7. Reporte estadístico completo")
     
+    # Crear instancia del analizador
+    analizador = Metodos('videojuegos_dataset.csv')
+    # Generar reporte completo
+    analizador.generar_reporte_completo()
     
+    # Generar dashboard
+    analizador.generar_dashboard()
     
+
 main()
