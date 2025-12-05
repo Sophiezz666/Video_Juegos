@@ -108,7 +108,7 @@ class Metodos(VideoJuego):
         unidades_por_año = self.df.groupby('release_year')['units_sold'].sum()
         
         # Crear figura con múltiples subplots
-        fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+        fig, axes = plt.subplots(2, 2, figsize=(12, 12))
         fig.suptitle('Dashboard de Análisis de Videojuegos', fontsize=16, fontweight='bold')
         
         # Gráfico 1: Ventas por Género (Top 10)
