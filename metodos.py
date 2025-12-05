@@ -39,17 +39,16 @@ class Metodos(VideoJuego):
         print("\nMostrar por columna Título (primeros 10):")
         print(self.df['title'].head(10))
         print("-" * 40)
-        
-        #Mostrar dos columnas,parte sophia
-        
+   
+        print("\nMostrar columnas Unidades vendidas y Ganancias totales (primeros 50):")
+        print(self.mostrar_dos_columnas())
+
         print("\nMostrar filas por índice (0-6):")
         print(self.df.iloc[0:7])
     
-    def filtrar_datos(self, genero=None, score_min=None, plataforma=None, año_min=None):
+    def filtrar_datos(self, genero=None ):
         
         #Filtra datos según criterios especificados
-        
-
         print("\n" + "="*60)
         print("FILTRADO DE DATOS")
         print("="*60)
@@ -62,21 +61,10 @@ class Metodos(VideoJuego):
             print(f"Encontrados {len(df_filtrado)} juegos de {genero}")
             print(df_filtrado[['title', 'platform', 'release_year', 'metascore']].head(10))
         
-        #parte,sophia
+        print("\nFiltrado por metascore mayor de 90")
+        print(self.filtrar_metascore(90))
         
-        if plataforma:
-            print(f"\nFiltrar por plataforma '{plataforma}':")
-            df_filtrado_plataforma = self.df[self.df['platform'] == plataforma]
-            print(f"Encontrados {len(df_filtrado_plataforma)} juegos para {plataforma}")
-            print(df_filtrado_plataforma[['title', 'genre', 'release_year']].head(10))
-        
-        if año_min:
-            print(f"\nFiltrar por año mínimo {año_min}:")
-            df_filtrado_año = self.df[self.df['release_year'] >= año_min]
-            print(f"Encontrados {len(df_filtrado_año)} juegos desde {año_min}")
-            print(df_filtrado_año[['title', 'release_year', 'platform']].head(10))
-        
-        return df_filtrado if any([genero, plataforma, año_min]) else None
+        return df_filtrado if any([genero ]) else None
     
     def crear_metricas(self):
         #Crea nuevas métricas y columnas calculadas
@@ -84,45 +72,29 @@ class Metodos(VideoJuego):
         print("CREACIÓN DE NUEVAS MÉTRICAS")
         print("="*60)
         
-        # Crear columna de ingreso por unidad
+        print("\nCrear nueva columna Total ganancias por unidad (Primeros 50):")
+        print(self.crear_columna())
         
-        
-      
-    
     def ordenar_y_agrupar(self):
         """Realiza operaciones de ordenamiento y agrupación"""
         print("\n" + "="*60)
         print("ORDENAMIENTO Y AGRUPACIÓN DE DATOS")
         print("="*60)
-        
-        # Ordenar por total de ganancias (descendente)
-        #parte sophia
-        
-        
-        # Agrupar por plataforma y año
-        #parte shopia
-      
-    
+        print("\n---Ordenar por total_revenue---") 
+        print(self.ordenar_por_ganancias())
+        print(f"\n---Agrupar ganancias anuales por plataforma---")
+        print(self.agrupar_unidades_vendidas_año())
+     
     def manejar_valores_nulos(self):
         # Maneja valores nulos en el dataset
         print("\n" + "="*60)
         print("MANEJO DE VALORES NULOS")
         print("="*60)
+
+        print("\nSimulacion de valor nulo en Total ganancias")
+        print(self.simular_nulo(indice=1, columna='total_revenue'))
+        print(self.rellenar_nulos(columna='total_revenue', valor_diferencial = 1000000))
         
-        # Mostrar valores nulos actuales,parte sophia
-        print("Valor nulo:")
-       
-        
-        
-        # Contar nulos después de simulación
-        nulos_ingreso = self.df['total_revenue'].isnull().sum()
-        print(f"Nulos en 'total_revenue' después de simulación: {nulos_ingreso}")
-        
-        if nulos_ingreso > 0:
-            # Rellenar nulos con la mediana
-            mediana = self.df['total_revenue'].median()
-            self.df['total_revenue'] = self.df['total_revenue'].fillna(mediana)
-            print(f"Valores nulos reemplazados con la mediana: ${mediana:,.2f}")
     
     def generar_dashboard(self):
         #"Genera un dashboard con gráficos"
@@ -193,7 +165,7 @@ class Metodos(VideoJuego):
         self.seleccionar_datos()
         
         # Ejemplos de filtrado
-        self.filtrar_datos(genero='RPG', score_min=90)
+        self.filtrar_datos('Simulation')
         
         self.crear_metricas()
         self.ordenar_y_agrupar()
@@ -221,9 +193,9 @@ class Metodos(VideoJuego):
         print(f"Unidades vendidas promedio: {self.df['units_sold'].mean():,.0f}")
 
 
-    def mostrar_dos_columnas(self, units_sold, total_revenue): # Se especifican las columnas a mostrar
-        print(f"\n---Mostrar columnas especificas: {units_sold} y {total_revenue}---") # Mensaje de encabezado
-        return self.df[[units_sold, total_revenue]].head(50) # Retorna los 50 primeros registros de las columnas especificadas
+    def mostrar_dos_columnas(self): # Se especifican las columnas a mostrar
+        print(f"\n---Mostrar columnas especificas: {'units_sold'} y {'total_revenue'}---") # Mensaje de encabezado
+        return self.df[['units_sold', 'total_revenue']].head(50) # Retorna los 50 primeros registros de las columnas especificadas
         
     def filtrar_metascore(self, score_minimo=90): # Se especifica el score minimo para filtrar
         print(f"\n---Juegos con MetaScore > {score_minimo} ---") # Mensaje encabezado
@@ -234,14 +206,14 @@ class Metodos(VideoJuego):
         self.df['revenue_unit'] = self.df['total_revenue']/self.df['units_sold'] # Calculo entre columnas para total de ganancias por unidad
         return self.df[['title', 'revenue_unit']].head(50) # Retorna primeros 50 registro de la columna creada
     
-    def ordenar_por_ganancias(self, total_revenue): # Ordena por total de ganancias
-        print(f"\n---Ordenar por total_revenue---") # Encabezado
+    def ordenar_por_ganancias(self): # Ordena por total de ganancias
+        print("\n---Ordenar por total_revenue---") # Encabezado
         df_ordenado = self.df.sort_values('total_revenue', ascending=False) # Ordena el df por el total de ganancias mayor a menor
-        return df_ordenado[['title', total_revenue]].head(50) # Retorna los 50 primeros registros del df ordenado
+        return df_ordenado[['title', 'total_revenue']].head(50) # Retorna los 50 primeros registros del df ordenado
     
     def agrupar_unidades_vendidas_año(self): # Agrupa unidades vendidas por año de lanzamiento
-        print(f"\n---Agrupar ganancias anuales por platforma---") # Mensade encabezado
-        unidades_vendidas_año = self.df.groupby(['plataform','release_year'])['units_sold'].sum() # Agrupa datos unidades vendidas por  Año de lanzamiento 
+        print("\n---Agrupar ganancias anuales por plataforma---") # Mensade encabezado
+        unidades_vendidas_año = self.df.groupby(['platform','release_year'])['units_sold'].sum() # Agrupa datos unidades vendidas por  Año de lanzamiento 
         return unidades_vendidas_año.head(50) # Retorna primeros 50 registros del  agrupamiento
     
     def simular_nulo(self, indice=1, columna='total_revenue'): # Simula valor nulo por incdice y columna
