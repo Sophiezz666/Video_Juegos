@@ -104,10 +104,12 @@ class Metodos(VideoJuego): # Clase para analizar y procesar datos de videojuegos
         total_por_plataforma = self.df.groupby('platform')['total_revenue'].sum()
         unidades_por_año = self.df.groupby('release_year')['units_sold'].sum()
         
+        # Preparar datos para Box Plot (Ganancias miles de millones)
+        revenue_B = self.df['total_revenue'] / 1e9
+    
         # Crear figura con múltiples subplots
         fig, axes = plt.subplots(2, 2, figsize=(9, 9))
         fig.suptitle('Dashboard de Análisis de Videojuegos', fontsize=16, fontweight='bold')
-        
         # Gráfico 1: Ventas por Género (Top 10)
         total_por_genero.head(10).plot(kind='bar', ax=axes[0, 0], color='skyblue', edgecolor='black')
         axes[0, 0].set_title('Top 10 Géneros por Ingresos Totales', fontweight='bold')
@@ -130,17 +132,16 @@ class Metodos(VideoJuego): # Clase para analizar y procesar datos de videojuegos
         axes[1, 0].grid(alpha=0.3)
         axes[1, 0].fill_between(unidades_por_año.index, unidades_por_año.values, alpha=0.3, color='green')
         
-        # Gráfico 4: Relación entre Metascore y Unidades Vendidas
-        scatter = axes[1, 1].scatter(self.df['metascore'], self.df['units_sold'] / 1000000, 
-                                     c=self.df['release_year'], cmap='viridis', alpha=0.6, s=50)
-        axes[1, 1].set_title('Relación: Metascore vs Unidades Vendidas', fontweight='bold')
-        axes[1, 1].set_xlabel('Metascore')
-        axes[1, 1].set_ylabel('Unidades Vendidas (millones)')
-        axes[1, 1].grid(alpha=0.3)
+        # Gráfico 4: Box plot deteccion de outliers en ganancias
+        axes[1, 1].boxplot(revenue_B.dropna(), vert=True, patch_artist=True,
+                           boxprops=dict(facecolor='#FFC840', color='#CC7000'),
+                           medianprops=dict(color='#006400', linewidth=2),
+                           flierprops=dict(marker='o', markersize=8, markerfacecolor='red', alpha=0.7)) # Los outliers son los puntos
+        axes[1, 1].set_title('Distribucion y Outliers de Ingresos Totales ($B)', fontweight='bold')
+        axes[1, 1].set_xticks([1])
+        axes[1, 1].set_ylabel('Ganancias (Miles de Millones - $B)')
+        axes[1, 1].grid(axis='y', alpha=0.6)
         
-        # Añadir barra de color para el año
-        cbar = plt.colorbar(scatter, ax=axes[1, 1])
-        cbar.set_label('Año de Lanzamiento')
         
         plt.tight_layout()
         plt.show()
