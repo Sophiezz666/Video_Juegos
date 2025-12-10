@@ -2,16 +2,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from VideoJuego import VideoJuego
-#
-class Metodos(VideoJuego):
-    def __init__(self, archivo_csv):
-        super().__init__(archivo_csv)
-        
-    #Clase para analizar y procesar datos de videojuegos
 
-        # Obtener el dataframe desde esa clase
+class Metodos(VideoJuego): # Clase para analizar y procesar datos de videojuegos
+    def __init__(self, archivo_csv):
+        super().__init__(archivo_csv) # Obtener el dataframe desde esa clase
+        
     def mostrar_info_basica(self):
-        #"Muestra información básica del dataset"
+        # Muestra información básica del dataset
         print("\n" + "="*60)
         print("Información dataset")
         print("="*60)
@@ -31,7 +28,7 @@ class Metodos(VideoJuego):
         print(f"Años cubiertos: {self.df['release_year'].min()} - {self.df['release_year'].max()}")
     
     def seleccionar_datos(self):
-        """Muestra ejemplos de selección de datos"""
+        # Muestra ejemplos de selección de datos
         print("\n" + "="*60)
         print("EJEMPLOS DE SELECCIÓN DE DATOS")
         print("="*60)
@@ -48,7 +45,7 @@ class Metodos(VideoJuego):
     
     def filtrar_datos(self, genero=None ):
         
-        #Filtra datos según criterios especificados
+        # Filtra datos según criterios especificados
         print("\n" + "="*60)
         print("FILTRADO DE DATOS")
         print("="*60)
@@ -67,7 +64,7 @@ class Metodos(VideoJuego):
         return df_filtrado if any([genero ]) else None
     
     def crear_metricas(self):
-        #Crea nuevas métricas y columnas calculadas
+        # Crea nuevas métricas y columnas calculadas
         print("\n" + "="*60)
         print("CREACIÓN DE NUEVAS MÉTRICAS")
         print("="*60)
@@ -76,7 +73,7 @@ class Metodos(VideoJuego):
         print(self.crear_columna())
         
     def ordenar_y_agrupar(self):
-        """Realiza operaciones de ordenamiento y agrupación"""
+        # Realiza operaciones de ordenamiento y agrupación
         print("\n" + "="*60)
         print("ORDENAMIENTO Y AGRUPACIÓN DE DATOS")
         print("="*60)
@@ -97,7 +94,7 @@ class Metodos(VideoJuego):
         
     
     def generar_dashboard(self):
-        #"Genera un dashboard con gráficos"
+        # Genera un dashboard con gráficos
         print("\n" + "="*60)
         print("GENERANDO DASHBOARD DE ANÁLISIS")
         print("="*60)
@@ -108,7 +105,7 @@ class Metodos(VideoJuego):
         unidades_por_año = self.df.groupby('release_year')['units_sold'].sum()
         
         # Crear figura con múltiples subplots
-        fig, axes = plt.subplots(2, 2, figsize=(12, 12))
+        fig, axes = plt.subplots(2, 2, figsize=(9, 9))
         fig.suptitle('Dashboard de Análisis de Videojuegos', fontsize=16, fontweight='bold')
         
         # Gráfico 1: Ventas por Género (Top 10)
@@ -166,7 +163,6 @@ class Metodos(VideoJuego):
         
         # Ejemplos de filtrado
         self.filtrar_datos('Simulation')
-        
         self.crear_metricas()
         self.ordenar_y_agrupar()
         self.manejar_valores_nulos()
