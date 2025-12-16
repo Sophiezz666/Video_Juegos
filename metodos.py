@@ -20,7 +20,7 @@ class Metodos(VideoJuego): # Clase para analizar y procesar datos de videojuegos
         print("\nInformación del DataSet:")
         print(self.df.info())
         
-        print("\nseleccion columna dataset:")
+        print("\nselección columna dataset:")
         print(self.df.describe())
         
         print(f"\nColumnas disponibles: {list(self.df.columns)}")
@@ -88,11 +88,11 @@ class Metodos(VideoJuego): # Clase para analizar y procesar datos de videojuegos
         print("MANEJO DE VALORES NULOS")
         print("="*60)
 
-        print("\nSimulacion de valor nulo en Total ganancias")
+        print("\nSimulación de valor nulo en Total ganancias")
         print(self.simular_nulo(indice=1, columna='total_revenue'))
         print(self.rellenar_nulos(columna='total_revenue', valor_diferencial = 1000000))
-        
-    
+          
+
     def generar_dashboard(self):
         # Genera un dashboard con gráficos
         print("\n" + "="*60)
@@ -106,23 +106,51 @@ class Metodos(VideoJuego): # Clase para analizar y procesar datos de videojuegos
         
         # Preparar datos para Box Plot (Ganancias miles de millones)
         revenue_B = self.df['total_revenue'] / 1e9
-    
+        
+        # Definir std para dashboard
+        stats_df = self.df.describe().loc[['std', 'min', 'max']] # Obtener estadisticas y rango
+        metricas = ['release_year', 'units_sold', 'metascore', 'total_revenue'] # Columnas numericas para el analisis
+
+        df_std_plot = pd.DataFrame({ # Creación del DataFrame de variabilidad
+            'Metricas' : metricas,
+            'Std' : stats_df.loc['std', metricas],
+            'Rango' : stats_df.loc['max', metricas] - stats_df.loc['min', metricas] 
+        }) 
+        
         # Crear figura con múltiples subplots
-        fig, axes = plt.subplots(2, 2, figsize=(9, 9))
-        fig.suptitle('Dashboard de Análisis de Videojuegos', fontsize=16, fontweight='bold')
+        fig, axes = plt.subplots(2, 2, figsize=(9, 9)) # Se establece es espacio
+        fig.suptitle('Dashboard de Análisis de Videojuegos', fontsize=16, fontweight='bold') # Se crea titulo para el dashboars y sus caracteristicas
+
         # Gráfico 1: Ventas por Género (Top 10)
-        total_por_genero.head(10).plot(kind='bar', ax=axes[0, 0], color='skyblue', edgecolor='black')
-        axes[0, 0].set_title('Top 10 Géneros por Ingresos Totales', fontweight='bold')
-        axes[0, 0].set_xlabel('Género')
-        axes[0, 0].set_ylabel('Ingresos Totales (en miles de millones)')
+        total_por_genero.head(10).plot(kind='bar', ax=axes[0, 0], color='skyblue', edgecolor='black') 
+        axes[0, 0].set_title('Top 10 Géneros por Ingresos Totales', fontweight='bold') # Se establece titulo
+        axes[0, 0].set_xlabel('Género') # Etiqueta eje x
+        axes[0, 0].set_ylabel('Ingresos Totales (en miles de millones)') # Etiqueta eje y
         axes[0, 0].tick_params(axis='x', rotation=45)
         axes[0, 0].grid(axis='y', alpha=0.3)
         
-        # Gráfico 2: Participación por Plataforma
-        total_por_plataforma.plot(kind='pie', ax=axes[0, 1], autopct='%1.1f%%', 
-                                  colors=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'])
-        axes[0, 1].set_title('Distribución de Ingresos por Plataforma', fontweight='bold')
-        axes[0, 1].set_ylabel('')
+        # Gráfico 2: Desviasion estandar
+
+        # Calcula la variabilidad relativa (%)
+        df_std_plot['Variabilidad_Relativa'] = (df_std_plot['Std'] / (df_std_plot['Rango'] + 1e-9)) * 100
+        df_std_plot = df_std_plot.sort_values(by= 'Variabilidad_Relativa', ascending=False)
+        ax_std = axes[0, 1]
+
+        bars = ax_std.bar(df_std_plot['Metricas'], df_std_plot['Variabilidad_Relativa'],
+                          color=['#3498db', '#f1c40f', '#2ecc71', '#e74c3c'], edgecolor='black')
+        
+        # Etiquetas de valor 
+        for bar in bars:
+            yval = bar.get_height()
+            ax_std.text(bar.get_x() + bar.get_width() / 2, yval + 1, f'{yval:.1f}', ha = 'center', va = 'bottom', fontweight = 'bold')
+
+        # Estandarizacion del grafico
+        ax_std.set_title('Variabilidad_Relativa (Desv. Estandar Normalizada)', fontweight = 'bold', fontsize = 12)
+        ax_std.set_xlabel('Metricas del DataSet')
+        ax_std.set_ylabel('Variabilidad Relativa (%)')
+        ax_std.tick_params(axis = 'x', rotation = 45)
+        ax_std.grid(axis='y', alpha=0.5, linestyle='--')
+        ax_std.set_ylim(0, df_std_plot['Variabilidad_Relativa'].max() * 1.1)
         
         # Gráfico 3: Unidades vendidas por año
         unidades_por_año.plot(kind='line', ax=axes[1, 0], marker='o', color='green', linewidth=2)
@@ -137,7 +165,7 @@ class Metodos(VideoJuego): # Clase para analizar y procesar datos de videojuegos
                            boxprops=dict(facecolor='#FFC840', color='#CC7000'),
                            medianprops=dict(color='#006400', linewidth=2),
                            flierprops=dict(marker='o', markersize=8, markerfacecolor='red', alpha=0.7)) # Los outliers son los puntos
-        axes[1, 1].set_title('Distribucion y Outliers de Ingresos Totales ($B)', fontweight='bold')
+        axes[1, 1].set_title('Distribución y Outliers de Ingresos Totales ($B)', fontweight='bold')
         axes[1, 1].set_xticks([1])
         axes[1, 1].set_ylabel('Ganancias (Miles de Millones - $B)')
         axes[1, 1].grid(axis='y', alpha=0.6)
